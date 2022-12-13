@@ -139,8 +139,8 @@ unit = ""
 [[multi.gauge]]
 name = "checksum_last_failure"
 gauge_type = "f64"
-description = "Time at which the last data checksum failure was detected in this database."
-unit = ""
+description = "Unixtime at which the last data checksum failure was detected in this database."
+unit = "second"
 
 [[multi.gauge]]
 name = "blk_read_time"
