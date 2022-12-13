@@ -1,7 +1,11 @@
 [package]
 name = "rs-postgres-stat2otel"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
+description = "Converts PostgreSQL Query Results to Metrics"
+license = "Apache-2.0"
+documentation = "https://docs.rs/crate/rs-postgres-stat2otel"
+repository = "https://github.com/takanoriyanagitani/rs-postgres-stat2otel"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
