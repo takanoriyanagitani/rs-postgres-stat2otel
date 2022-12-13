@@ -23,6 +23,12 @@ fn pg_new_client() -> Result<Client, String> {
     Config::new()
         .host(env::var("PGHOST").unwrap_or_default().as_str())
         .user(env::var("PGUSER").unwrap_or_default().as_str())
+        .port(
+            env::var("PGPORT")
+                .ok()
+                .and_then(|s: String| str::parse(s.as_str()).ok())
+                .unwrap_or(5432),
+        )
         .password(env::var("PGPASSWORD").unwrap_or_default().as_str())
         .connect(NoTls)
         .map_err(|e| format!("Unable to connect: {}", e))

@@ -18,8 +18,8 @@ query = '''
         temp_files::BIGINT,
         temp_bytes::BIGINT,
         deadlocks::BIGINT,
-        checksum_failures::BIGINT,
-        EXTRACT(EPOCH FROM checksum_last_failure)::FLOAT8 AS checksum_last_failure,
+        COALESCE(checksum_failures, 0)::BIGINT AS checksum_failures,
+        COALESCE(EXTRACT(EPOCH FROM checksum_last_failure), 0.0)::FLOAT8 AS checksum_last_failure,
         blk_read_time::FLOAT8,
         blk_write_time::FLOAT8,
         session_time::FLOAT8,
@@ -34,7 +34,7 @@ query = '''
     WHERE
       datname NOT IN (
         'template0',
-        'tepmlate1'
+        'template1'
       )
 '''
 
@@ -59,7 +59,140 @@ description = "Number of transactions in this database that have been committed.
 unit = ""
 
 [[multi.gauge]]
+name = "xact_rollback"
+gauge_type = "i64"
+description = "Number of transactions in this database that have been rolled back."
+unit = ""
+
+[[multi.gauge]]
+name = "blks_read"
+gauge_type = "i64"
+description = "Number of disk blocks read in this database."
+unit = ""
+
+[[multi.gauge]]
+name = "blks_hit"
+gauge_type = "i64"
+description = "Number of times disk blocks were found already in the buffer cache."
+unit = ""
+
+[[multi.gauge]]
+name = "tup_returned"
+gauge_type = "i64"
+description = "Number of live rows fetched by sequential scans."
+unit = ""
+
+[[multi.gauge]]
+name = "tup_fetched"
+gauge_type = "i64"
+description = "Number of live rows fetched by index scans in this database."
+unit = ""
+
+[[multi.gauge]]
+name = "tup_inserted"
+gauge_type = "i64"
+description = "Number of rows inserted by queries in this database."
+unit = ""
+
+[[multi.gauge]]
+name = "tup_updated"
+gauge_type = "i64"
+description = "Number of rows updated by queries in this database."
+unit = ""
+
+[[multi.gauge]]
+name = "tup_deleted"
+gauge_type = "i64"
+description = "Number of rows deleted by queries in this database."
+unit = ""
+
+[[multi.gauge]]
+name = "conflicts"
+gauge_type = "i64"
+description = "Number of queries canceled due to conflicts."
+unit = ""
+
+[[multi.gauge]]
+name = "temp_files"
+gauge_type = "i64"
+description = "Number of temporary files."
+unit = ""
+
+[[multi.gauge]]
+name = "temp_bytes"
+gauge_type = "i64"
+description = "Total amount of data written to temporary files."
+unit = ""
+
+[[multi.gauge]]
+name = "deadlocks"
+gauge_type = "i64"
+description = "Number of dead locks."
+unit = ""
+
+[[multi.gauge]]
+name = "checksum_failures"
+gauge_type = "i64"
+description = "Number of data page checksum failures."
+unit = ""
+
+[[multi.gauge]]
+name = "checksum_last_failure"
+gauge_type = "f64"
+description = "Time at which the last data checksum failure was detected in this database."
+unit = ""
+
+[[multi.gauge]]
 name = "blk_read_time"
 gauge_type = "f64"
-description = "Time spent reading data file blocks by backends in this database.."
+description = "Time spent reading data file blocks by backends in this database."
 unit = "ms"
+
+[[multi.gauge]]
+name = "blk_write_time"
+gauge_type = "f64"
+description = "Time spent writing data file blocks by backends in this database."
+unit = "ms"
+
+[[multi.gauge]]
+name = "session_time"
+gauge_type = "f64"
+description = "Time spent by database sessions in this database."
+unit = "ms"
+
+[[multi.gauge]]
+name = "active_time"
+gauge_type = "f64"
+description = "Time spent executing SQL statements in this database."
+unit = "ms"
+
+[[multi.gauge]]
+name = "idle_in_transaction_time"
+gauge_type = "f64"
+description = "Time spent idling while in a transaction in this database."
+unit = "ms"
+
+[[multi.gauge]]
+name = "sessions_abandoned"
+gauge_type = "i64"
+description = "Number of db sessions that were terminated(client lost)."
+unit = ""
+
+[[multi.gauge]]
+name = "sessions_fatal"
+gauge_type = "i64"
+description = "Number of database sessions terminated by fatal errors."
+unit = ""
+
+[[multi.gauge]]
+name = "sessions_killed"
+gauge_type = "i64"
+description = "Number of database sessions terminated by operator."
+unit = ""
+
+[[multi.gauge]]
+name = "stats_reset"
+gauge_type = "i64"
+description = "Unixtime at which these statistics were last reset."
+unit = "second"
+
