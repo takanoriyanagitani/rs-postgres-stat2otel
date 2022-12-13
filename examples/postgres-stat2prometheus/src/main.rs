@@ -12,11 +12,9 @@ use prometheus::{Encoder, TextEncoder};
 
 use rs_postgres_stat2otel::{
     col::Column,
-    metrics::MetricsCollection,
-    multi::Multi,
+    metrics::{observer_new, MetricsCollection},
     query::{from_slice_default, CustomQuery},
     row::Row,
-    single::Single,
 };
 
 fn pg_new_client() -> Result<Client, String> {
@@ -55,8 +53,7 @@ fn pgcol2col(r: &postgres::Row, c: &postgres::Column) -> Option<Column> {
     }
 }
 
-fn get_single(c: &mut Client, s: &Single) -> Option<Row> {
-    let query: &str = s.as_query();
+fn get_single_query(c: &mut Client, query: &str) -> Option<Row> {
     let o: Option<postgres::Row> = c.query_opt(query, &[]).ok().flatten();
     match o {
         None => {
@@ -74,8 +71,7 @@ fn get_single(c: &mut Client, s: &Single) -> Option<Row> {
     }
 }
 
-fn get_multi(c: &mut Client, s: &Multi) -> Vec<Row> {
-    let query: &str = s.as_query();
+fn get_multi_query(c: &mut Client, query: &str) -> Vec<Row> {
     let v: Vec<postgres::Row> = c.query(query, &[]).ok().unwrap_or_default();
     v.is_empty().then(|| eprintln!("Empty rows"));
     v.into_iter()
@@ -90,8 +86,8 @@ fn get_multi(c: &mut Client, s: &Multi) -> Vec<Row> {
         .collect()
 }
 
-fn observe(m: &MetricsCollection, ctx: &Context, client: &mut Client) {
-    m.observe(client, &mut get_single, &mut get_multi, ctx)
+fn new_observer(m: MetricsCollection, c: Client) -> impl FnMut(&Context) {
+    observer_new(m, get_single_query, get_multi_query, c)
 }
 
 fn new_metrics_collection(source: &[u8]) -> Result<MetricsCollection, String> {
@@ -124,9 +120,10 @@ fn sub() -> Result<(), String> {
     il.read_to_end(&mut buf)
         .map_err(|e| format!("Unable to read config: {}", e))?;
     let mc: MetricsCollection = new_metrics_collection(&buf)?;
+    let client: Client = pg_new_client()?;
+    let mut observer = new_observer(mc, client);
     let ctx: Context = Context::current();
-    let mut client: Client = pg_new_client()?;
-    observe(&mc, &ctx, &mut client);
+    observer(&ctx);
 
     let te: TextEncoder = TextEncoder::new();
     let metrics_items: Vec<_> = prometheus::default_registry().gather();

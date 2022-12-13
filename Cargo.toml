@@ -1,6 +1,6 @@
 [package]
 name = "rs-postgres-stat2otel"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 description = "Converts PostgreSQL Query Results to Metrics"
 license = "Apache-2.0"

@@ -158,3 +158,20 @@ impl MetricsCollection {
         self.observe_multi(data_source, get_multi, c);
     }
 }
+
+pub fn observer_new<D, M, S>(
+    m: MetricsCollection,
+    mut get_single: S,
+    mut get_multi: M,
+    mut shared: D,
+) -> impl FnMut(&Context)
+where
+    S: FnMut(&mut D, &str) -> Option<Row>,
+    M: FnMut(&mut D, &str) -> Vec<Row>,
+{
+    let mut gs = move |d: &mut D, s: &Single| get_single(d, s.as_query());
+
+    let mut gm = move |d: &mut D, m: &Multi| get_multi(d, m.as_query());
+
+    move |c: &Context| m.observe(&mut shared, &mut gs, &mut gm, c)
+}
