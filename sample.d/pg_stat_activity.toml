@@ -1,0 +1,37 @@
+[[multi]]
+
+query = '''
+    SELECT
+        'pg_stat_activity'::TEXT AS query_name,
+        datname::TEXT,
+        application_name::TEXT,
+        EXTRACT(SECOND FROM (CLOCK_TIMESTAMP() - query_start))::FLOAT8 AS elapsed,
+        wait_event_type::TEXT,
+        wait_event::TEXT,
+        state::TEXT,
+        backend_type::TEXT
+    FROM pg_stat_activity
+'''
+
+[[multi.label]]
+name = "query_name"
+description = "Name of this query."
+
+[[multi.label]]
+name = "datname"
+description = "Name of this database."
+
+[[multi.label]]
+name = "application_name"
+description = "Name of the application that is connected to this backend."
+
+[[multi.label]]
+name = "wait_event_type"
+description = "The type of event for which the backend is waiting."
+
+[[multi.gauge]]
+name = "elapsed"
+gauge_type = "f64"
+description = "Time elapsed for this query."
+unit = "seconds"
+

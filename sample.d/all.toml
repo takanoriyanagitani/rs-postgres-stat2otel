@@ -1,0 +1,120 @@
+[[multi]]
+
+query = '''
+    SELECT
+        datname::TEXT,
+        application_name::TEXT,
+        EXTRACT(SECOND FROM (CLOCK_TIMESTAMP() - query_start))::FLOAT8 AS elapsed,
+        wait_event_type::TEXT,
+        wait_event::TEXT,
+        state::TEXT,
+        backend_type::TEXT
+    FROM pg_stat_activity
+'''
+
+[[multi.label]]
+name = "datname"
+description = "Name of this database."
+
+[[multi.label]]
+name = "application_name"
+description = "Name of the application that is connected to this backend."
+
+[[multi.label]]
+name = "wait_event_type"
+description = "The type of event for which the backend is waiting."
+
+[[multi.gauge]]
+name = "elapsed"
+gauge_type = "f64"
+description = "Time elapsed for this query."
+unit = "seconds"
+
+[[multi]]
+
+query = '''
+    SELECT
+        datname::TEXT,
+        numbackends::INTEGER,
+        xact_commit::BIGINT,
+        xact_rollback::BIGINT,
+        blks_read::BIGINT,
+        blks_hit::BIGINT,
+        tup_returned::BIGINT,
+        tup_fetched::BIGINT,
+        tup_inserted::BIGINT,
+        tup_updated::BIGINT,
+        tup_deleted::BIGINT,
+        conflicts::BIGINT,
+        temp_files::BIGINT,
+        temp_bytes::BIGINT,
+        deadlocks::BIGINT,
+        checksum_failures::BIGINT,
+        EXTRACT(EPOCH FROM checksum_last_failure)::FLOAT8 AS checksum_last_failure,
+        blk_read_time::FLOAT8,
+        blk_write_time::FLOAT8,
+        session_time::FLOAT8,
+        active_time::FLOAT8,
+        idle_in_transaction_time::FLOAT8,
+        sessions::BIGINT,
+        sessions_abandoned::BIGINT,
+        sessions_fatal::BIGINT,
+        sessions_killed::BIGINT,
+        EXTRACT(EPOCH FROM stats_reset)::FLOAT8 AS stats_reset
+    FROM pg_stat_database
+    WHERE
+      datname NOT IN (
+        'template0',
+        'tepmlate1'
+      )
+'''
+
+[[multi.label]]
+name = "datname"
+description = "Name of this database."
+
+[[multi.gauge]]
+name = "numbackends"
+gauge_type = "i32"
+description = "Number of backends currently connected to this database."
+unit = ""
+
+[[multi.gauge]]
+name = "xact_commit"
+gauge_type = "i64"
+description = "Number of transactions in this database that have been committed."
+unit = ""
+
+[[multi.gauge]]
+name = "blk_read_time"
+gauge_type = "f64"
+description = "Time spent reading data file blocks by backends in this database.."
+unit = "ms"
+[[single]]
+
+query = '''
+    SELECT
+        wal_records::BIGINT,
+        wal_fpi::BIGINT,
+        wal_bytes::BIGINT,
+        wal_buffers_full::BIGINT,
+        wal_write::BIGINT,
+        wal_sync::BIGINT,
+        wal_write_time::FLOAT8,
+        wal_sync_time::FLOAT8,
+        EXTRACT(EPOCH FROM stats_reset)::FLOAT8 AS stats_reset
+    FROM pg_stat_wal
+    LIMIT 1
+'''
+
+[[single.gauge]]
+name = "wal_records"
+gauge_type = "i64"
+description = "Total number of WAL records generated."
+unit = ""
+
+[[single.gauge]]
+name = "wal_fpi"
+gauge_type = "i64"
+description = "Total number of WAL full page images generated."
+unit = ""

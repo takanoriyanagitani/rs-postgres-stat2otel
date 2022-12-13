@@ -1,0 +1,33 @@
+[[single]]
+
+query = '''
+    SELECT
+        'pg_stat_wal'::TEXT AS query_name,
+        wal_records::BIGINT,
+        wal_fpi::BIGINT,
+        wal_bytes::BIGINT,
+        wal_buffers_full::BIGINT,
+        wal_write::BIGINT,
+        wal_sync::BIGINT,
+        wal_write_time::FLOAT8,
+        wal_sync_time::FLOAT8,
+        EXTRACT(EPOCH FROM stats_reset)::FLOAT8 AS stats_reset
+    FROM pg_stat_wal
+    LIMIT 1
+'''
+
+[[single.label]]
+name = "query_name"
+description = "Name of this query."
+
+[[single.gauge]]
+name = "wal_records"
+gauge_type = "i64"
+description = "Total number of WAL records generated."
+unit = ""
+
+[[single.gauge]]
+name = "wal_fpi"
+gauge_type = "i64"
+description = "Total number of WAL full page images generated."
+unit = ""

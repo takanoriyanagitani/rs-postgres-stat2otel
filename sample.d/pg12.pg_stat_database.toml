@@ -1,0 +1,58 @@
+[[multi]]
+
+query = '''
+    SELECT
+        'pg_stat_database'::TEXT AS query_name,
+        datname::TEXT,
+        numbackends::INTEGER,
+        xact_commit::BIGINT,
+        xact_rollback::BIGINT,
+        blks_read::BIGINT,
+        blks_hit::BIGINT,
+        tup_returned::BIGINT,
+        tup_fetched::BIGINT,
+        tup_inserted::BIGINT,
+        tup_updated::BIGINT,
+        tup_deleted::BIGINT,
+        conflicts::BIGINT,
+        temp_files::BIGINT,
+        temp_bytes::BIGINT,
+        deadlocks::BIGINT,
+        COALESCE(checksum_failures, 0)::BIGINT,
+        COALESCE(EXTRACT(EPOCH FROM checksum_last_failure), 0.0)::FLOAT8 AS checksum_last_failure,
+        blk_read_time::FLOAT8,
+        blk_write_time::FLOAT8,
+        EXTRACT(EPOCH FROM stats_reset)::FLOAT8 AS stats_reset
+    FROM pg_stat_database
+    WHERE
+      datname NOT IN (
+        'template0',
+        'tepmlate1'
+      )
+'''
+
+[[multi.label]]
+name = "query_name"
+description = "Name of this query."
+
+[[multi.label]]
+name = "datname"
+description = "Name of this database."
+
+[[multi.gauge]]
+name = "numbackends"
+gauge_type = "i32"
+description = "Number of backends currently connected to this database."
+unit = ""
+
+[[multi.gauge]]
+name = "xact_commit"
+gauge_type = "i64"
+description = "Number of transactions in this database that have been committed."
+unit = ""
+
+[[multi.gauge]]
+name = "blk_read_time"
+gauge_type = "f64"
+description = "Time spent reading data file blocks by backends in this database.."
+unit = "ms"
