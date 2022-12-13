@@ -5,7 +5,15 @@ query = '''
         'pg_stat_activity'::TEXT AS query_name,
         datname::TEXT,
         application_name::TEXT,
-        EXTRACT(SECOND FROM (CLOCK_TIMESTAMP() - query_start))::FLOAT8 AS elapsed,
+        COALESCE(
+            EXTRACT(
+                SECOND
+                FROM (
+                    CLOCK_TIMESTAMP() - query_start
+                )
+            )::FLOAT8,
+            -1.0
+        ) AS elapsed,
         wait_event_type::TEXT,
         wait_event::TEXT,
         state::TEXT,
@@ -28,6 +36,18 @@ description = "Name of the application that is connected to this backend."
 [[multi.label]]
 name = "wait_event_type"
 description = "The type of event for which the backend is waiting."
+
+[[multi.label]]
+name = "wait_event"
+description = "Wait event name if backend is currently waiting."
+
+[[multi.label]]
+name = "state"
+description = "Current overall state of this backend."
+
+[[multi.label]]
+name = "backend_type"
+description = "Type of current backend."
 
 [[multi.gauge]]
 name = "elapsed"

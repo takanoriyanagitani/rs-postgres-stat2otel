@@ -8,7 +8,14 @@ export PGDATABASE=postgres
 
 export OTEL_SERVICE_NAME=test-pg2otel
 
-cat \
-  sample.d/pg12.pg_stat_database.toml \
-  sample.d/pg_stat_activity.toml \
-  | ./target/release/postgres-stat2prometheus
+names(){
+    #echo sample.d/pg12.pg_stat_database.toml
+    echo sample.d/pg_stat_activity.toml
+}
+
+main(){
+    cat $( names ) |
+        ./target/release/postgres-stat2prometheus
+}
+
+main
