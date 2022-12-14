@@ -9,9 +9,10 @@ export PGDATABASE=postgres
 export OTEL_SERVICE_NAME=test-pg2otel
 
 names(){
-    echo sample.d/pg12.pg_stat_database.toml
+    #echo sample.d/pg12.pg_stat_database.toml
     #echo sample.d/pg_stat_database.toml
-    echo sample.d/pg_stat_activity.toml
+    echo sample.d/pg_stat_wal.toml
+    #echo sample.d/pg_stat_activity.toml
 }
 
 main(){
