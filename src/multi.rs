@@ -4,6 +4,7 @@ use crate::{
     label::Label,
 };
 
+/// Multi gets gauge items from many rows(Label required).
 pub struct Multi {
     query: String,
     label: Vec<Label>,
@@ -11,14 +12,17 @@ pub struct Multi {
 }
 
 impl Multi {
+    /// Gets query string to get metrics rows.
     pub fn as_query(&self) -> &str {
         self.query.as_str()
     }
 
+    /// Gets labels.
     pub fn as_label(&self) -> &[Label] {
         &self.label
     }
 
+    /// Gets gauges.
     pub fn as_gauge(&self) -> &[Gauge] {
         &self.gauge
     }
@@ -44,6 +48,7 @@ impl TryFrom<RawMulti> for Multi {
     }
 }
 
+/// Raw(serialized) Multi.
 #[derive(serde::Deserialize)]
 pub struct RawMulti {
     query: String,
