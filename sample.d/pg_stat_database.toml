@@ -192,7 +192,7 @@ unit = ""
 
 [[multi.gauge]]
 name = "stats_reset"
-gauge_type = "i64"
+gauge_type = "f64"
 description = "Unixtime at which these statistics were last reset."
 unit = "second"
 
