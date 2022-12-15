@@ -1,3 +1,7 @@
+//! Many metrics items / single request(Label required)
+//!
+//! Number of rows got from a single query can be greater than one.
+
 use crate::{
     evt::Event,
     gauge::{Gauge, RawGauge},
