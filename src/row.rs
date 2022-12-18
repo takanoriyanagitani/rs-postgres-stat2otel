@@ -4,6 +4,7 @@ use crate::col::Column;
 
 use opentelemetry::Value;
 
+/// Contains many columns.
 pub struct Row {
     columns: Vec<Column>,
 }
