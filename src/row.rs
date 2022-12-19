@@ -1,3 +1,5 @@
+//! A row which contains columns.
+
 use std::collections::BTreeMap;
 
 use crate::col::Column;
@@ -10,10 +12,15 @@ pub struct Row {
 }
 
 impl Row {
+    /// Gets columns.
     pub fn as_columns(&self) -> &[Column] {
         &self.columns
     }
 
+    /// Converts to a map.
+    ///
+    /// - Key: The name of the column.
+    /// - Val: The value of the column.
     pub fn to_map(&self) -> BTreeMap<String, Value> {
         let i = self.as_columns().iter().map(|c: &Column| {
             let key: &str = c.as_name();
@@ -23,6 +30,7 @@ impl Row {
         BTreeMap::from_iter(i)
     }
 
+    /// Creates new row from columns.
     pub fn new(columns: Vec<Column>) -> Self {
         Self { columns }
     }
