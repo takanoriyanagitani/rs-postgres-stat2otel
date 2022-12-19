@@ -1,9 +1,14 @@
+//! Single set of metrics items / single request
+//!
+//! A query must return one row.
+
 use crate::{
     evt::Event,
     gauge::{Gauge, RawGauge},
     label::Label,
 };
 
+/// Single gets gauge items from single row.
 pub struct Single {
     query: String,
     label: Option<Vec<Label>>,
@@ -29,6 +34,7 @@ impl TryFrom<RawSingle> for Single {
     }
 }
 
+/// Raw(serialized) Single.
 #[derive(serde::Deserialize)]
 pub struct RawSingle {
     query: String,
@@ -37,14 +43,17 @@ pub struct RawSingle {
 }
 
 impl Single {
+    /// Gets the query string to get a metrics row.
     pub fn as_query(&self) -> &str {
         self.query.as_str()
     }
 
+    /// Takes all labels if exists.
     pub fn take_label(&mut self) -> Option<Vec<Label>> {
         self.label.take()
     }
 
+    /// Gets all labels(can be empty).
     pub fn as_label(&self) -> &[Label] {
         match &self.label {
             None => &[],
@@ -52,6 +61,7 @@ impl Single {
         }
     }
 
+    /// Gets all gauge items.
     pub fn as_gauge(&self) -> &[Gauge] {
         &self.gauge
     }

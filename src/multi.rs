@@ -1,6 +1,6 @@
-//! Many metrics items / single request(Label required)
+//! Many sets of metrics items / single request(Label required)
 //!
-//! Number of rows got from a single query can be greater than one.
+//! The query may return more than one row.
 
 use crate::{
     evt::Event,
@@ -16,7 +16,7 @@ pub struct Multi {
 }
 
 impl Multi {
-    /// Gets query string to get metrics rows.
+    /// Gets the query string to get metrics rows.
     pub fn as_query(&self) -> &str {
         self.query.as_str()
     }
