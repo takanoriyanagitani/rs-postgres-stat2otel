@@ -1,7 +1,10 @@
+//! A Gauge builder
+
 use crate::evt::Event;
 
 use opentelemetry::metrics::{Meter, ObservableGauge, Unit};
 
+/// List of gauge number type.
 #[derive(PartialEq, Eq, Debug, Clone, Copy)]
 pub enum GaugeType {
     Float,
@@ -20,6 +23,7 @@ impl TryFrom<&str> for GaugeType {
     }
 }
 
+/// Serialized `Gauge`.
 #[derive(serde::Deserialize)]
 pub struct RawGauge {
     name: String,
@@ -28,35 +32,48 @@ pub struct RawGauge {
     unit: String,
 }
 
+/// A gauge config.
 pub struct Gauge {
+    /// The name of the gauge.
     name: String,
+
+    /// The type of this gauge.
     typ: GaugeType,
+
     description: String,
+
+    /// The unit of this gauge(can be empty).
     unit: String,
 }
 
 impl Gauge {
+    /// Gets the name of this gauge.
     pub fn as_name(&self) -> &str {
         self.name.as_str()
     }
 
+    /// Gets the type of this gauge.
     pub fn as_type(&self) -> GaugeType {
         self.typ
     }
 
+    /// Gets the description of this gauge.
     pub fn as_desc(&self) -> &str {
         self.description.as_str()
     }
 
+    /// Gets the unit string of this gauge.
     pub fn as_unit(&self) -> &str {
         self.unit.as_str()
     }
 
+    /// Gets the unit of this gauge if exists.
     pub fn to_unit(&self) -> Option<Unit> {
         let empty: bool = self.unit.is_empty();
         (!empty).then(|| Unit::new(self.unit.clone()))
     }
 
+    /// Creates `ObservableGauge`(i64).
     pub fn to_integer_gauge(&self, m: &Meter) -> ObservableGauge<i64> {
         let builder = m
             .i64_observable_gauge(self.as_name())
@@ -67,6 +84,7 @@ impl Gauge {
         }
     }
 
+    /// Creates `ObservableGauge`(f64).
     pub fn to_float_gauge(&self, m: &Meter) -> ObservableGauge<f64> {
         let builder = m
             .f64_observable_gauge(self.as_name())
