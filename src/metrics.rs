@@ -1,3 +1,5 @@
+//! Creates an observer from a query info.
+
 use std::collections::BTreeMap;
 
 use crate::{
@@ -15,6 +17,7 @@ use opentelemetry::{
     Context, KeyValue, Value,
 };
 
+/// Observable Gauges.
 pub struct Metrics {
     integer: BTreeMap<String, ObservableGauge<i64>>,
     float: BTreeMap<String, ObservableGauge<f64>>,
@@ -35,6 +38,7 @@ impl Metrics {
         }
     }
 
+    /// Observes values got from a row.
     pub fn observe_single(&self, c: &Context, row: &Row, labels: &[Label]) {
         let m: BTreeMap<String, Value> = row.to_map();
         let attrs: Vec<KeyValue> = Label::to_attrs(labels, &m);
@@ -51,12 +55,14 @@ impl Metrics {
         }
     }
 
+    /// Observes values got from rows.
     pub fn observe(&self, c: &Context, rows: &[Row], labels: &[Label]) {
         for row in rows {
             self.observe_single(c, row, labels)
         }
     }
 
+    /// Creates new observable gauges.
     pub fn new(meter: &Meter, gs: &[Gauge]) -> Self {
         let mut integer: BTreeMap<String, ObservableGauge<i64>> = BTreeMap::new();
         let mut float: BTreeMap<String, ObservableGauge<f64>> = BTreeMap::new();
@@ -78,6 +84,7 @@ impl Metrics {
     }
 }
 
+/// A pair of observable gauges(single, multi)
 pub struct MetricsCollection {
     single: Vec<(Single, Metrics)>,
     multi: Vec<(Multi, Metrics)>,
@@ -102,6 +109,7 @@ impl MetricsCollection {
         Self { single, multi }
     }
 
+    /// Creates new collection using a query info.
     pub fn new(meter: &Meter, mut q: CustomQuery) -> Self {
         let rs: Vec<RawSingle> = q.take_single().unwrap_or_default();
         let rm: Vec<RawMulti> = q.take_multi().unwrap_or_default();
@@ -144,6 +152,7 @@ impl MetricsCollection {
         }
     }
 
+    /// Observes all gauges.
     pub fn observe<D, M, S>(
         &self,
         data_source: &mut D,
@@ -159,6 +168,7 @@ impl MetricsCollection {
     }
 }
 
+/// Creates new observer.
 pub fn observer_new<D, M, S>(
     m: MetricsCollection,
     mut get_single: S,
