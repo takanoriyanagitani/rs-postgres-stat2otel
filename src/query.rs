@@ -1,5 +1,6 @@
 use crate::{evt::Event, multi::RawMulti, single::RawSingle};
 
+/// Metrics config collection(Single/Multi).
 #[derive(serde::Deserialize)]
 pub struct CustomQuery {
     multi: Option<Vec<RawMulti>>,
@@ -7,21 +8,25 @@ pub struct CustomQuery {
 }
 
 impl CustomQuery {
+    /// Takes `RawSingle` collection.
     pub fn take_single(&mut self) -> Option<Vec<RawSingle>> {
         self.single.take()
     }
 
+    /// Takes `RawMulti` collection.
     pub fn take_multi(&mut self) -> Option<Vec<RawMulti>> {
         self.multi.take()
     }
 }
 
+/// Parses custom query config bytes to create `CustomQuery` using toml parser.
 #[cfg(feature = "config_toml")]
 pub fn from_toml_slice(b: &[u8]) -> Result<CustomQuery, Event> {
     toml::de::from_slice(b)
         .map_err(|e| Event::InvalidConfig(format!("Unable to parse toml bytes: {}", e)))
 }
 
+/// Parses custom query config bytes to create `CustomQuery` using default parser.
 #[cfg(feature = "config_toml")]
 pub fn from_slice_default(b: &[u8]) -> Result<CustomQuery, Event> {
     from_toml_slice(b)
