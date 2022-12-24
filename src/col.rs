@@ -1,3 +1,5 @@
+//! A metrics value container.
+
 use opentelemetry::Value;
 
 /// A metrics value(with name) container.
