@@ -1,6 +1,8 @@
+//! Metrics config collection.
+
 use crate::{evt::Event, multi::RawMulti, single::RawSingle};
 
-/// Metrics config collection(Single/Multi).
+/// Metrics config collection(Single row query collection/Multi rows query collection).
 #[derive(serde::Deserialize)]
 pub struct CustomQuery {
     multi: Option<Vec<RawMulti>>,
